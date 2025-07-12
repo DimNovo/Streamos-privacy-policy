@@ -1,0 +1,284 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Streamos App – Privacy & Terms</title>
+  <style>
+    body {
+      font-family: 'Inter', Arial, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    h1, h2 {
+      color: #111;
+    }
+    p {
+      margin: 0.5rem 0;
+    }
+    a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .tab-nav {
+      display: flex;
+      border-bottom: 2px solid #ddd;
+      margin-bottom: 1.5rem;
+    }
+    .tab-nav button {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .tab-nav button.active {
+      background-color: #0077cc;
+      color: white;
+      border-radius: 4px 4px 0 0;
+    }
+    .tab-nav button:hover:not(.active) {
+      background-color: #e0e0e0;
+    }
+    .tab-content {
+      display: none;
+      padding: 1.5rem;
+      background: white;
+      border-radius: 0 4px 4px 4px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .tab-content.active {
+      display: block;
+    }
+    .theme-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      border: none;
+      font-size: 1.5rem;
+      background: #00000000;
+      cursor: pointer;
+      border-radius: 50px;
+    }
+    .theme-toggle:hover {
+      background: #005fa3;
+    }
+    body.dark-mode {
+      background-color: #222;
+      color: #ddd;
+    }
+    body.dark-mode h1, body.dark-mode h2 {
+      color: #fff;
+    }
+    body.dark-mode .tab-nav {
+      border-bottom-color: #444;
+    }
+    body.dark-mode .tab-nav button {
+      color: #ddd;
+    }
+    body.dark-mode .tab-nav button.active {
+      background-color: #005fa3;
+    }
+    body.dark-mode .tab-nav button:hover:not(.active) {
+      background-color: #333;
+    }
+    body.dark-mode .tab-content {
+      background: #333;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+    @media (max-width: 600px) {
+      .tab-nav {
+        flex-direction: column;
+      }
+      .tab-nav button {
+        width: 100%;
+        text-align: left;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+      }
+      .theme-toggle {
+        top: 0.5rem;
+        right: 0.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="theme-toggle" onclick="toggleTheme()">🌒</button>
+  <div class="container">
+    <h1>Streamos App – Privacy & Terms</h1>
+    <div class="tab-nav">
+      <button class="tab-button active" onclick="openTab('privacy')">Privacy Policy</button>
+      <button class="tab-button" onclick="openTab('terms')">Terms and Conditions</button>
+    </div>
+    <div id="privacy" class="tab-content active">
+      <h2>Privacy Policy for Streamos App</h2>
+      <p><strong>Last updated:</strong> July 12, 2025</p>
+      <p>Streamos is a platform for creating libraries and viewing streaming IPTV with user-provided content. This Privacy Policy explains how we collect, use, protect, and disclose your personal information when you use our Service.</p>
+      <p>By using Streamos, you agree to the terms and practices described in this Privacy Policy. Please read it carefully to understand how we handle your information.</p>
+      <h3>Information Collection and Use</h3>
+      <p>Streamos does not require personally identifiable information (PII) for general use of the Service. We only collect PII when explicitly provided by you for specific features, such as account creation or customer support. Examples of PII we may collect include your email address or username, if provided.</p>
+      <h3>Log Data</h3>
+      <p>We may collect anonymized log data to improve the Service, including device type, operating system version, app configuration, and usage timestamps. This data does not identify you personally and is used solely for analytics and performance optimization.</p>
+      <h3>Data Retention</h3>
+      <p>Log data is retained for up to 12 months or as needed to improve the Service. If you provide PII, we retain it only for as long as necessary to fulfill the purpose for which it was collected or to comply with legal obligations. You may request deletion of your PII by contacting us.</p>
+      <h3>Third-Party Data Sharing</h3>
+      <p>We do not share your PII with third parties except as required to operate the Service (e.g., hosting providers) or to comply with legal obligations. Any third-party service providers are bound by confidentiality agreements to protect your data.</p>
+      <h3>Cookies</h3>
+      <p>Streamos does not use cookies or similar tracking technologies.</p>
+      <h3>Your Privacy Rights</h3>
+      <p>Depending on your jurisdiction, you may have rights to access, correct, delete, or restrict the processing of your personal information. To exercise these rights, contact us at <a href="mailto:streamos.app.sup@gmail.com">streamos.app.sup@gmail.com</a>. We will respond within 30 days, as required by applicable laws like GDPR or CCPA.</p>
+      <h3>Security</h3>
+      <p>We use industry-standard measures, such as encryption and access controls, to protect your information. However, no method of transmission or storage is 100% secure, and we cannot guarantee absolute security. We regularly review and update our security practices to safeguard your data.</p>
+      <h3>Links to Other Sites</h3>
+      <p>Our Service may contain links to third-party websites not operated by Streamos. We are not responsible for their content or privacy practices. We encourage you to review the privacy policies of these websites.</p>
+      <h3>Children’s Privacy</h3>
+      <p>Streamos does not knowingly collect PII from children under 18. Parents or guardians should monitor their children’s internet usage and instruct them not to provide PII without consent. If we learn that a child under 18 has provided PII, we will promptly delete it. Contact us if you believe this has occurred.</p>
+      <h3>Changes to This Privacy Policy</h3>
+      <p>We may update this Privacy Policy periodically. Significant changes will be communicated via email, in-app notifications, or by updating the policy on this page. Please check this page regularly for updates.</p>
+      <p>This Privacy Policy is effective as of July 12, 2025.</p>
+      <h3>Governing Law</h3>
+      <p>This Privacy Policy is governed by the laws of Israel, excluding its conflict of law provisions. Your use of the Service may also be subject to other local, state, national, or international laws.</p>
+      <h3>Contact Us</h3>
+      <p>If you have questions or concerns about this Privacy Policy, please <a href="mailto:streamos.app.sup@gmail.com">contact us</a>.</p>
+      <p>Your privacy matters to us, and we are committed to protecting your information to the best of our ability.</p>
+    </div>
+    <div id="terms" class="tab-content">
+      <h2>Terms and Conditions for Streamos App</h2>
+      <p><strong>Last updated:</strong> July 12, 2025</p>
+      <p>Please read these Terms and Conditions carefully before using Our Service.</p>
+      <h3>Interpretation and Definitions</h3>
+      <h4>Interpretation</h4>
+      <p>Words with capitalized initial letters have meanings defined below. These definitions apply whether used in singular or plural form.</p>
+      <h4>Definitions</h4>
+      <p>For these Terms and Conditions:</p>
+      <ul>
+        <li><strong>Application</strong> means the Streamos software program downloaded by You on any electronic device.</li>
+        <li><strong>Application Store</strong> means the digital distribution service operated by Apple Inc. (Apple App Store) or Google Inc. (Google Play Store) where the Application is downloaded.</li>
+        <li><strong>Affiliate</strong> means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of shares, equity interest, or voting securities.</li>
+        <li><strong>Country</strong> refers to Israel.</li>
+        <li><strong>Company</strong> (referred to as "the Company", "We", "Us", or "Our") refers to Streamos.</li>
+        <li><strong>Device</strong> means any device accessing the Service, such as a computer, cellphone, or digital tablet.</li>
+        <li><strong>Service</strong> refers to the Application.</li>
+        <li><strong>Terms and Conditions</strong> (also "Terms") mean this agreement between You and the Company regarding Service use.</li>
+        <li><strong>Third-party Social Media Service</strong> means services or content provided by a third-party displayed or included in the Service.</li>
+        <li><strong>You</strong> means the individual or legal entity accessing or using the Service.</li>
+      </ul>
+      <h3>Acknowledgment</h3>
+      <p>These Terms and Conditions govern your use of the Service and form the agreement between You and the Company. By accessing or using the Service, You agree to be bound by these Terms. If You disagree with any part, You may not use the Service.</p>
+      <p>You represent that you are over 18. The Company does not permit users under 18 to use the Service.</p>
+      <p>Your use of the Service is also conditioned on your acceptance of Our Privacy Policy, which describes how we collect, use, and disclose your personal information.</p>
+      <h3>In-App Purchases</h3>
+      <p>Streamos may offer in-app purchases, such as subscriptions or premium features. Payments are processed via the Application Store’s payment systems. Refunds are subject to the Application Store’s policies. Subscriptions may auto-renew unless canceled at least 24 hours before the renewal date. You can manage subscriptions through your Application Store account. By making in-app purchases, You agree to these terms.</p>
+      <h3>Quality of Internet Connection</h3>
+      <p>Streamos strives to provide a seamless experience but is not responsible for the quality, stability, or speed of your internet connection, which may affect Service performance.</p>
+      <h3>Platform for User-Provided Content</h3>
+      <p>Streamos is a platform for creating libraries and viewing streaming IPTV using user-provided content. We do not provide content. By uploading or streaming content, You grant Streamos a non-exclusive, worldwide, royalty-free license to host, process, and display the content solely to provide the Service. You are solely responsible for the legality, accuracy, and appropriateness of your content.</p>
+      <h3>Prohibited Activities</h3>
+      <p>You agree not to:</p>
+      <ul>
+        <li>Upload or share illegal, infringing, or harmful content.</li>
+        <li>Use the Service to violate any laws or regulations.</li>
+        <li>Attempt to gain unauthorized access to the Service or its systems.</li>
+        <li>Engage in activities that disrupt or harm the Service or other users.</li>
+      </ul>
+      <h3>Links to Other Websites</h3>
+      <p>Our Service may link to third-party websites not controlled by the Company. We are not responsible for their content, privacy policies, or practices. We recommend reviewing their terms and privacy policies.</p>
+      <h3>Termination</h3>
+      <p>We may terminate or suspend Your access immediately, without notice or liability, for reasons including breach of these Terms or prohibited activities. Upon termination, Your right to use the Service ceases immediately.</p>
+      <h3>Limitation of Liability</h3>
+      <p>To the maximum extent permitted by law, the Company’s liability is limited to the amount You paid through the Service, or $100 if no payment was made. The Company and its suppliers are not liable for special, incidental, indirect, or consequential damages, including loss of profits, data, or privacy, even if advised of such possibilities.</p>
+      <p>Some jurisdictions may not allow certain liability limitations, in which case they will apply to the fullest extent permitted.</p>
+      <h3>"AS IS" and "AS AVAILABLE" Disclaimer</h3>
+      <p>The Service is provided "AS IS" and "AS AVAILABLE" without warranties of any kind, including merchantability, fitness for a particular purpose, or non-infringement. We do not guarantee uninterrupted, error-free operation or the accuracy of content provided through the Service.</p>
+      <p>Some jurisdictions may not allow certain warranty exclusions, in which case they will apply to the fullest extent enforceable.</p>
+      <h3>Governing Law</h3>
+      <p>These Terms are governed by the laws of Israel, excluding its conflict of law rules. Your use of the Service may also be subject to other local, state, national, or international laws.</p>
+      <h3>Disputes Resolution</h3>
+      <p>If You have a concern or dispute, please first contact Us at <a href="mailto:streamos.app.sup@gmail.com">streamos.app.sup@gmail.com</a> to resolve it informally. If unresolved, disputes may be subject to binding arbitration in Israel, as permitted by law.</p>
+      <h3>Legal Compliance</h3>
+      <p>You represent that You are not located in a country subject to U.S. government embargoes or designated as a "terrorist supporting" country and are not listed on any U.S. government prohibited parties list.</p>
+      <h3>Severability and Waiver</h3>
+      <h4>Severability</h4>
+      <p>If any provision of these Terms is unenforceable, it will be modified to achieve its objectives to the greatest extent possible, and other provisions remain in effect.</p>
+      <h4>Waiver</h4>
+      <p>Failure to enforce a right or obligation does not waive it for future enforcement.</p>
+      <h3>Translation Interpretation</h3>
+      <p>If these Terms are translated, the original English text prevails in case of disputes.</p>
+      <h3>Changes to These Terms and Conditions</h3>
+      <p>We may modify these Terms at Our discretion. Material changes will be notified via email, in-app notifications, or by updating this page at least 30 days before taking effect. Continued use after changes indicates your agreement. If You disagree, stop using the Service.</p>
+      <h3>Contact Us</h3>
+      <p>If you have questions about these Terms, please <a href="mailto:streamos.app.sup@gmail.com">contact us</a>.</p>
+    </div>
+  </div>
+  <script>
+    function openTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-button');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      buttons.forEach(button => button.classList.remove('active'));
+      document.getElementById(tabName).classList.add('active');
+      document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+    }
+    function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+      const button = document.querySelector('.theme-toggle');
+      button.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌒';
+    }
+  </script>
+</body>
+</html>
